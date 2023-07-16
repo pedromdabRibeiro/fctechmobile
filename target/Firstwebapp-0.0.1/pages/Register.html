@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<head>
+	<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+	<title>Register</title>
+</head>
+
+<h1>Register!</h1>
+
+<script>
+
+	function register() {
+		var password = document.getElementById('password').value
+		var confirmPassword = document.getElementById('confirmPassword').value
+		if (password == confirmPassword) {
+
+			const params = {
+
+				"username": document.getElementById('username').value,
+				"email": document.getElementById('email').value,
+				"name": document.getElementById('name').value,
+				"password": document.getElementById('password').value,
+				"nif": document.getElementById('nif').value,
+				"phone": document.getElementById('phone').value,
+				"mobilePhone": document.getElementById('mobilePhone').value,
+				"privacy": document.getElementById('privacy').value,
+				"address": document.getElementById('address').value,
+				"compAddress": document.getElementById('compAddress').value,
+				"locality": document.getElementById('locality').value,
+				"zipCode": document.getElementById('zipCode').value
+			}
+
+
+			const http = new XMLHttpRequest()
+			http.open('POST', '/rest/register')
+			http.setRequestHeader('Content-type', 'application/json')
+			http.send(JSON.stringify(params))
+
+
+
+			http.onreadystatechange = function () {
+
+				if (http.status == 200) {
+					window.location.assign('Registered.html');
+					window.localStorage.setItem('user', document.getElementById('username').value);
+				}
+				else {
+					alert(http.responseText);
+				}
+			}
+		} else {
+			alert("Passwords don't match");
+		}
+
+	}
+
+
+</script>
+
+<body>
+
+	<form>
+		<label for="username">Username(*):</label><br>
+		<input type="text" id="username" name="username"><br>
+		<label for="email">Email(*)</label><br>
+		<input type="text" id="email" name="email"><br>
+		<label for="name">Name(*)</label><br>
+		<input type="text" id="name" name="name"><br>
+		<label for="password">Password(*):</label><br>
+		<input type="password" id="password" name="password"><br>
+		<label for="confirmPassword">Password Confirmation(*):</label><br>
+		<input type="password" id="confirmPassword" name="confirmPassword"><br>
+		<label for="phone">Phone:</label><br>
+		<input type="text" id="phone" name="phone"><br>
+		<label for="mobilePhone">Mobile Phone:</label><br>
+		<input type="text" id="mobilePhone" name="mobilePhone"><br>
+		<label for="address">Address:</label><br>
+		<input type="text" id="address" name="address"><br>
+		<label for="compAddress">compAddress:</label><br>
+		<input type="text" id="compAddress" name="compAddress"><br>
+		<label for="locality">Locality:</label><br>
+		<input type="text" id="locality" name="locality"><br>
+		<label for="zipCode">Zipcode:</label><br>
+		<input type="text" id="zipCode" name="zipCode"><br>
+		<label for="nif">NIF:</label><br>
+		<input type="text" id="nif" name="nif"><br> <br>
+
+		<label for="privacy">Privacy:</label>
+		<select id="privacy" name="privacy">
+			<option value="">-- Select --</option>
+			<option value="public">Public</option>
+			<option value="private">Private</option>
+		</select><br>
+	</form>
+
+	<button onclick='register()'>Register</button> <br> <br>
+	<a href="/">
+		<button>Back</button>
+	</a>
+
+</body>
+
+</html>

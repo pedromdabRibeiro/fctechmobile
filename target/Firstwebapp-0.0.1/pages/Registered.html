@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<head>
+	<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+	<title>Registered</title>
+</head>
+
+
+<body>
+	<center>
+		<script>
+			const user = localStorage.getItem("user")
+			document.write("<h1>User " + user + " successfully created!</h1> <br> <br>");
+			function activateAccount() {
+
+				const params = {
+					"username": user
+				}
+
+				const http = new XMLHttpRequest();
+				http.open('PUT', '/rest/activateAccount/own');
+				http.setRequestHeader('Content-type', 'application/json');
+				http.send(JSON.stringify(params));
+
+				http.onload = function () {
+
+					if (http.status == 200) {
+						window.location.assign('Login.html')
+					}
+					else {
+						alert(http.responseText);
+					}
+				}
+			}
+		</script>
+		<h3>Want to activate your account?</h3>
+		<button onclick='activateAccount()'>Activate</button><br><br>
+	</center>
+
+</body>
+
+</html>

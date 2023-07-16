@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<head>
+	<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+	<title>Logged In</title>
+	<script>
+		const user = localStorage.getItem("user");
+		const tokenId = localStorage.getItem("tokenId");
+		const creationDateLong = parseFloat(localStorage.getItem("creationDate"));
+		const expirationDateLong = parseFloat(localStorage.getItem("expirationDate"));
+		const creationDateObj = new Date(creationDateLong);
+		const expirationDateObj = new Date(expirationDateLong);
+		const creationDate = creationDateObj.toLocaleString("en-GB");
+		const expirationDate = expirationDateObj.toLocaleString("en-GB");
+		const role = localStorage.getItem("role");
+	</script>
+</head>
+
+<body>
+	<h1>You have successfully logged in.</h1>
+	<script>
+		document.write("<p>Welcome, " + user + " with the role: " + role + "!</p>");
+		document.write("<p>Your tokenId: " + tokenId + "</p>");
+		document.write("<p>It was created at: " + creationDate + " and it expires at: " + expirationDate + "</p>");
+
+		function deleteAccount() {
+			const params = {
+				"username": user,
+				"tokenId": tokenId,
+				"deletedUsername": document.getElementById('deletedUsername').value
+			}
+
+			const http = new XMLHttpRequest();
+			http.open('DELETE', '/rest/delete');
+			http.setRequestHeader('Content-type', 'application/json');
+			http.send(JSON.stringify(params));
+
+			http.onload = function () {
+
+				if (http.status == 200) {
+					if (user != document.getElementById('deletedUsername').value) {
+						window.location.assign('Logged.html');
+					} else {
+						window.location.assign('/index.html')
+					}
+				}
+				else {
+					alert(http.responseText);
+				}
+
+			}
+
+		}
+		function logout() {
+			const params = {
+				"username": user,
+				"tokenId": tokenId
+			}
+
+			const http = new XMLHttpRequest();
+			http.open('POST', '/rest/logout');
+			http.setRequestHeader('Content-type', 'application/json');
+			http.send(JSON.stringify(params));
+
+			http.onload = function () {
+
+				if (http.status == 200) {
+					window.location.assign('/index.html')
+					window.localStorage.clear();
+				}
+				else {
+					alert(http.responseText);
+				}
+
+			}
+		}
+
+		function changePassword() {
+			var newPassword = document.getElementById('newPassword').value
+			var confirmPassword = document.getElementById('confirmNewPassword').value
+			if (newPassword == confirmPassword) {
+
+				const params = {
+					"username": user,
+					"tokenId": tokenId,
+					"oldPassword": document.getElementById('oldPassword').value,
+					"newPassword": newPassword
+				}
+
+				const http = new XMLHttpRequest();
+				http.open('PUT', '/rest/changePassword');
+				http.setRequestHeader('Content-type', 'application/json');
+				http.send(JSON.stringify(params));
+
+				http.onload = function () {
+
+					if (http.status == 200) {
+						window.location.assign('login.html')
+					}
+					else {
+						alert(http.responseText);
+					}
+
+				}
+			} else {
+				alert("The passwords don't match")
+			}
+		}
+		function updateRole() {
+
+			const params = {
+				"username": user,
+				"tokenId": tokenId,
+				"updatedUsername": document.getElementById('updatedUsername').value,
+				"newRole": document.getElementById('newRole').value
+			}
+
+			const http = new XMLHttpRequest();
+			http.open('PUT', '/rest/updateRole');
+			http.setRequestHeader('Content-type', 'application/json');
+			http.send(JSON.stringify(params));
+
+			http.onload = function () {
+
+				if (http.status == 200) {
+					window.location.assign('Logged.html')
+				}
+				else {
+					alert(http.responseText);
+				}
+
+			}
+		}
+		function activateAccount() {
+
+			const params = {
+				"username": user,
+				"tokenId": tokenId,
+				"activatedUsername": document.getElementById('activatedUsername').value
+			}
+
+			const http = new XMLHttpRequest();
+			http.open('PUT', '/rest/activateAccount/other');
+			http.setRequestHeader('Content-type', 'application/json');
+			http.send(JSON.stringify(params));
+
+			http.onload = function () {
+
+				if (http.status == 200) {
+					window.location.assign('Logged.html')
+				}
+				else {
+					alert(http.responseText);
+				}
+			}
+		}
+		function listUsers() {
+			if (role === "USER") {
+				const params = {}
+
+				const http = new XMLHttpRequest()
+				http.open('GET', '/rest/list/listUsers')
+				http.setRequestHeader('Content-type', 'application/json')
+				http.send(JSON.stringify(params))
+
+				http.onreadystatechange = function () {
+
+					if (http.status == 200) {
+						var obj = JSON.parse(http.responseText)
+						window.localStorage.setItem('users', obj);
+					}
+				}
+			}
+
+			if (role === "GBO") {
+				const params = {}
+				const http = new XMLHttpRequest()
+				http.open('GET', '/rest/list/listGBO')
+				http.setRequestHeader('Content-type', 'application/json')
+				http.send(JSON.stringify(params))
+
+				http.onreadystatechange = function () {
+
+					if (http.status == 200) {
+						var obj = JSON.parse(http.responseText)
+						window.localStorage.setItem('users', obj);
+					}
+				}
+			}
+			if (role === "GS") {
+				const params = {}
+				const http = new XMLHttpRequest()
+				http.open('GET', '/rest/list/listGS')
+				http.setRequestHeader('Content-type', 'application/json')
+				http.send(JSON.stringify(params))
+
+				http.onreadystatechange = function () {
+
+					if (http.status == 200) {
+						var obj = JSON.parse(http.responseText)
+						window.localStorage.setItem('users', obj);
+					}
+				}
+			}
+			if (role === "SU") {
+				const params = {}
+				const http = new XMLHttpRequest()
+				http.open('GET', '/rest/list/listSU')
+				http.setRequestHeader('Content-type', 'application/json')
+				http.send(JSON.stringify(params))
+
+				http.onreadystatechange = function () {
+
+					if (http.status == 200) {
+						var obj = JSON.parse(http.responseText)
+						window.localStorage.setItem('users', obj);
+					}
+				}
+			}
+			document.getElementById("users").innerHTML = document.getElementById("users").innerHTML + window.localStorage.getItem('users');
+		}
+		function updateUser() {
+			const params = {
+
+				"username": user,
+				"updatedUsername": document.getElementById('username').value,
+				"tokenId": tokenId,
+				"newEmail": document.getElementById('email').value,
+				"newName": document.getElementById('name').value,
+				"newNif": document.getElementById('nif').value,
+				"newPhone": document.getElementById('phone').value,
+				"newMobilePhone": document.getElementById('mobilePhone').value,
+				"newPrivacy": document.getElementById('privacy').value,
+				"newAddress": document.getElementById('address').value,
+				"newCompAddress": document.getElementById('compAddress').value,
+				"newLocality": document.getElementById('locality').value,
+				"newZipCode": document.getElementById('zipCode').value,
+			}
+
+
+			const http = new XMLHttpRequest()
+			http.open('PUT', '/rest/updateUser')
+			http.setRequestHeader('Content-type', 'application/json')
+			http.send(JSON.stringify(params))
+
+
+
+			http.onreadystatechange = function () {
+
+				if (http.status == 200) {
+					window.location.assign('Logged.html');
+				}
+				else {
+					alert(http.responseText);
+				}
+			}
+		}
+	</script>
+	<h3>Want to update a user's role?</h3>
+	<form>
+		<label for="updatedRoleUsername">Username to update role:</label><br>
+		<input type="text" id="updatedUsername" name="updatedUsername"><br>
+		<label for="newRole">New role:</label>
+		<select id="newRole" name="newRole">
+			<option value="USER">User</option>
+			<option value="GBO">GBO</option>
+			<option value="GS">GS</option>
+			<option value="SU">SU</option>
+		</select><br><br>
+	</form>
+	<button onclick='updateRole()'>Update Roll</button><br><br>
+
+	<h3>Want to activate a user?</h3>
+	<form>
+		<label for="activatedUsername">Username to activate:</label><br>
+		<input type="text" id="activatedUsername" name="activatedUsername"><br><br>
+	</form>
+	<button onclick='activateAccount()'>Activate</button><br><br>
+
+	<h3>Want to delete an account?</h3>
+	<form>
+		<label for="deletedUsername">Username to delete:</label><br>
+		<input type="text" id="deletedUsername" name="deletedUsername"><br>
+	</form>
+	<button onclick='deleteAccount()'>Delete</button><br><br>
+
+	<h3>Want to change your password?</h3>
+	<form>
+		<label for="oldPassword">Enter your current password:</label><br>
+		<input type="password" id="oldPassword" name="oldPassword"><br>
+		<label for="newPassword">Enter your new password:</label><br>
+		<input type="password" id="newPassword" name="newPassword"><br>
+		<label for="confirmNewPassword">Confirm your new password:</label><br>
+		<input type="password" id="confirmNewPassword" name="confirmNewPassword"><br>
+	</form>
+	<button onclick='changePassword()'>Confirm</button><br><br>
+
+	<h2>List all available users</h2>
+	<button onclick='listUsers()'>List available users</button> <br>
+	<h4 id="users">Users: </h4> <br><br>
+	<h2>Want to update an user?</h2>
+	<form>
+		<label for="username">Username to update:</label><br>
+		<input type="text" id="username" name="username"><br>
+		<label for="email">New Email</label><br>
+		<input type="text" id="email" name="email"><br>
+		<label for="name">New Name</label><br>
+		<input type="text" id="name" name="name"><br>
+		<label for="phone">New Phone:</label><br>
+		<input type="text" id="phone" name="phone"><br>
+		<label for="mobilePhone">New Mobile Phone:</label><br>
+		<input type="text" id="mobilePhone" name="mobilePhone"><br>
+		<label for="address">New Address:</label><br>
+		<input type="text" id="address" name="address"><br>
+		<label for="compAddress">New CompAddress:</label><br>
+		<input type="text" id="compAddress" name="compAddress"><br>
+		<label for="locality">New Locality:</label><br>
+		<input type="text" id="locality" name="locality"><br>
+		<label for="zipCode">New Zipcode:</label><br>
+		<input type="text" id="zipCode" name="zipCode"><br>
+		<label for="nif">New NIF:</label><br>
+		<input type="text" id="nif" name="nif"><br> <br>
+
+		<label for="privacy">New Privacy:</label>
+		<select id="privacy" name="privacy">
+			<option value="">-- Select --</option>
+			<option value="public">Public</option>
+			<option value="private">Private</option>
+		</select><br><br>
+	</form>
+	<button onclick='updateUser()'>Update</button> <br> <br>
+	<br><br>
+	<button onclick='logout()'>Logout</button>
+</body>
+
+</html>

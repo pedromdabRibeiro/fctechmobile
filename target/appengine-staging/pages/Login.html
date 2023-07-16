@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+<head>
+	<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+
+	<title>Login</title>
+</head>
+
+<script>
+	function login() {
+		const params = {
+
+			"username": document.getElementById('username').value,
+			"password": document.getElementById('password').value
+
+		}
+
+		const http = new XMLHttpRequest();
+		http.open('POST', '/rest/login');
+		http.setRequestHeader('Content-type', 'application/json');
+		http.send(JSON.stringify(params));
+
+		http.onload = function () {
+
+			if (http.status == 200) {
+				window.localStorage.setItem('user', document.getElementById('username').value);
+				var obj = JSON.parse(http.responseText);
+				window.localStorage.setItem('role', obj.role);
+				window.localStorage.setItem('tokenId', obj.tokenId);
+				window.localStorage.setItem('creationDate', obj.creationDate);
+				window.localStorage.setItem('expirationDate', obj.expirationDate);
+				window.localStorage.setItem('users', " ");
+				window.location.assign('Logged.html');
+			}
+			else {
+				alert(http.responseText);
+			}
+
+		}
+
+	}
+</script>
+
+<body>
+	<h1>Login!</h1>
+	<form>
+		<label for="username">Username:</label><br>
+		<input type="text" id="username" name="username"><br><br>
+		<label for="password">Password:</label><br>
+		<input type="password" id="password" name="password"><br> <br>
+
+	</form>
+
+	<button onclick='login()'>Login</button> <br> <br>
+
+	<a href="/">
+		<button>Back</button>
+	</a>
+
+</body>
+
+</html>
